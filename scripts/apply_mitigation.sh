@@ -24,17 +24,19 @@ for ini in $INI_FILES; do
     echo "    [+] Updated $ini"
 done
 
-# 2. Add drop-in INI if /etc/php.d or /etc/php/7.4/mods-available exists
-if [ -d "/etc/php/7.4/mods-available" ]; then
-    echo "[*] Creating Ubuntu/Debian mods-available drop-in..."
-    cat << 'EOF' > /etc/php/7.4/mods-available/php2shell-hardening.ini
+# 2. Add drop-in INI for Ubuntu/Debian mods-available across PHP 7.x branches
+for ver in 7.0 7.1 7.2 7.3 7.4; do
+    if [ -d "/etc/php/$ver/mods-available" ]; then
+        echo "[*] Creating Ubuntu/Debian mods-available drop-in for PHP $ver..."
+        cat << 'EOF' > "/etc/php/$ver/mods-available/php2shell-hardening.ini"
 ; PHP2Shell Emergency Mitigation
 session.upload_progress.enabled = 0
 session.upload_progress.cleanup = 1
 EOF
-    phpenmod -v 7.4 php2shell-hardening 2>/dev/null || true
-    echo "    [+] Enabled php2shell-hardening module"
-fi
+        phpenmod -v "$ver" php2shell-hardening 2>/dev/null || true
+        echo "    [+] Enabled php2shell-hardening module for PHP $ver"
+    fi
+done
 
 if [ -d "/etc/php.d" ]; then
     echo "[*] Creating RHEL/CentOS php.d drop-in..."
@@ -64,9 +66,11 @@ fi
 
 # 4. Prompt / Restart services
 echo "[*] Restarting PHP-FPM / Web services..."
-if systemctl is-active --quiet php7.4-fpm 2>/dev/null; then
-    systemctl restart php7.4-fpm && echo "    [+] Restarted php7.4-fpm"
-fi
+for ver in 7.0 7.1 7.2 7.3 7.4; do
+    if systemctl is-active --quiet "php${ver}-fpm" 2>/dev/null; then
+        systemctl restart "php${ver}-fpm" && echo "    [+] Restarted php${ver}-fpm"
+    fi
+done
 if systemctl is-active --quiet apache2 2>/dev/null; then
     systemctl restart apache2 && echo "    [+] Restarted apache2"
 fi
