@@ -19,6 +19,9 @@
 </IfModule>
 
 <IfModule lsapi_module>
+    # CloudLinux mod_lsapi (LSPHP) custom INI loader
+    # Replace USER with your cPanel username:
+    # lsapi_phpini /home/USER/public_html/php.ini
     php_flag session.upload_progress.enabled Off
     php_value session.upload_progress.enabled 0
 </IfModule>
