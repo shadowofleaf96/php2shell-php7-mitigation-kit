@@ -12,8 +12,21 @@
     RewriteRule .* - [F,L]
 </IfModule>
 
+# For LiteSpeed Web Server (LSPHP 7.x)
+<IfModule LiteSpeed>
+    php_flag session.upload_progress.enabled Off
+    php_value session.upload_progress.enabled 0
+</IfModule>
+
+<IfModule lsapi_module>
+    php_flag session.upload_progress.enabled Off
+    php_value session.upload_progress.enabled 0
+</IfModule>
+
 # For Apache running mod_php (PHP 7.x module)
 <IfModule mod_php7.c>
     php_flag session.upload_progress.enabled Off
+    php_value session.upload_progress.enabled 0
     php_flag session.upload_progress.cleanup On
 </IfModule>
+
