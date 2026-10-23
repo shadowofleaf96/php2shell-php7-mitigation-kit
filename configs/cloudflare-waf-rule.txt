@@ -1,0 +1,9 @@
+# Cloudflare Custom WAF Rule Expression for PHP2Shell (CVE-2026-109619)
+#
+# Rule Name: Block-PHP2Shell-UploadProgress-Exploit
+# Action: Block
+# Expression:
+
+(http.request.uri.query contains "PHP_SESSION_UPLOAD_PROGRESS") or
+(raw.http.request.uri contains "PHP_SESSION_UPLOAD_PROGRESS") or
+(http.request.body.mime contains "PHP_SESSION_UPLOAD_PROGRESS")

@@ -1,0 +1,19 @@
+# ====================================================================
+# PHP2Shell (CVE-2026-109618 / CVE-2026-109619) Apache Virtual Patch
+# Place inside .htaccess or inside your Apache VirtualHost configuration
+# ====================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block requests containing PHP_SESSION_UPLOAD_PROGRESS in query strings or HTTP request lines
+    RewriteCond %{QUERY_STRING} (PHP_SESSION_UPLOAD_PROGRESS) [NC,OR]
+    RewriteCond %{THE_REQUEST} (PHP_SESSION_UPLOAD_PROGRESS) [NC]
+    RewriteRule .* - [F,L]
+</IfModule>
+
+# For Apache running mod_php (PHP 7.x module)
+<IfModule mod_php7.c>
+    php_flag session.upload_progress.enabled Off
+    php_flag session.upload_progress.cleanup On
+</IfModule>
